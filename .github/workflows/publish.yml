@@ -19,6 +19,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload
-      run: rojo upload deploy.project.json --cookie "$ROBLOXSECURITY" --asset_id 9809420845
+      run: rojo upload deploy.project.json --cookie "$ROBLOSECURITY" --asset_id 9809420845
       env:
-        ROBLOXSECURITY: ${{ secrets.ROBLOXSECURITY }}
+        ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}
