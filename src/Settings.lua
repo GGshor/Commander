@@ -77,5 +77,5 @@ return {
 	["Admins"] = Admins,
 	["Permissions"] = Permissions,
 	["UI"] = UI,
-	["Misc"] = Misc
+	["Misc"] = Misc,
 }
