@@ -20,7 +20,7 @@ module.Execute = function(Client, Type, Attachment)
 			else
 				char.Humanoid.JumpHeight = tonumber(Input)
 			end
-			
+
 			return true
 		end
 		return false

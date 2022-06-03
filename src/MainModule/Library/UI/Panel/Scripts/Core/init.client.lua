@@ -15,10 +15,10 @@ local function setupModules()
 	end
 
 	for name, entry in pairs(classes) do
-		latteTable[name] = setmetatable({},{
+		latteTable[name] = setmetatable({}, {
 			__index = function(self, key: string)
 				return classes[name][key]
-			end
+			end,
 		})
 	end
 
@@ -27,13 +27,13 @@ local function setupModules()
 			module.Latte = latteTable
 		end
 	end
-	
+
 	for _, constructor in pairs(classes.Constructors) do
 		constructor.Elements = elements
 		constructor.Remotes = events
 		constructor.init()
 	end
-	
+
 	for _, constructor in pairs(classes.Constructors) do
 		constructor.setup()
 	end

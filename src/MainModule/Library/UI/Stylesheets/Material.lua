@@ -80,7 +80,7 @@ module.About.SubtitleColor = module.TextField.PlaceholderColor
 -- Duration for tweens
 module.Duration = {
 	VeryShort = 0.15,
-	Short = 0.3
+	Short = 0.3,
 }
 
 return module

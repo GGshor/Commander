@@ -37,10 +37,10 @@ module.prepare = function()
 
 	local UIGradient = Instance.new("UIGradient")
 	UIGradient.Rotation = 90
-	UIGradient.Transparency = NumberSequence.new{
+	UIGradient.Transparency = NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0),
-		NumberSequenceKeypoint.new(1, 1)
-	}
+		NumberSequenceKeypoint.new(1, 1),
+	})
 	UIGradient.Parent = Background
 
 	local UIListLayout = Instance.new("UIListLayout")
@@ -65,7 +65,10 @@ module.prepare = function()
 	Title.LayoutOrder = 1
 	Title.Name = "Title"
 	Title.Size = UDim2.new(1, 0, 0, 26)
-	Title.Text = Latte.Modules.Services.Players.LocalPlayer.DisplayName .. " (@" .. Latte.Modules.Services.Players.LocalPlayer.Name .. ")"
+	Title.Text = Latte.Modules.Services.Players.LocalPlayer.DisplayName
+		.. " (@"
+		.. Latte.Modules.Services.Players.LocalPlayer.Name
+		.. ")"
 	Title.TextColor3 = Latte.Modules.Stylesheet.Home.UsernameColor
 	Title.TextSize = 16
 	Title.TextYAlignment = Enum.TextYAlignment.Bottom
@@ -100,7 +103,9 @@ module.prepare = function()
 	local Icon = Instance.new("ImageLabel")
 	Icon.AnchorPoint = Vector2.new(0.5, 0.5)
 	Icon.BackgroundTransparency = 1
-	Icon.Image = "rbxthumb://type=AvatarHeadShot&id=" .. Latte.Modules.Services.Players.LocalPlayer.UserId .. "&w=420&h=420"
+	Icon.Image = "rbxthumb://type=AvatarHeadShot&id="
+		.. Latte.Modules.Services.Players.LocalPlayer.UserId
+		.. "&w=420&h=420"
 	Icon.Name = "Icon"
 	Icon.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Icon.ScaleType = Enum.ScaleType.Fit
@@ -146,7 +151,7 @@ module.update = function()
 	Server.Items["Players count"] = #Latte.Modules.Services.Players:GetPlayers()
 	Server.Items["Administrators ingame"] = #Latte.Modules.Services.CollectionService:GetTagged("commander.admins")
 	Page.Top.Container.Subtitle.Text = Level
-	
+
 	System.Items["Modules loaded"] = #Packages or 0
 	if Settings then
 		System.Items["Version"] = Settings.Version[1]
@@ -178,11 +183,11 @@ module.setup = function()
 				Latte.Modules.TButton.new(Elements.Topbar.Right.Commander):Connect(function()
 					Latte.Constructors.Window.Toggle()
 				end)
-        		Latte.Modules.Services.UserInputService.InputBegan:Connect(function(Input, isGameProcessed)
+				Latte.Modules.Services.UserInputService.InputBegan:Connect(function(Input, isGameProcessed)
 					if Input.KeyCode == Settings.UI.Keybind and not isGameProcessed then
 						Latte.Constructors.Window.Toggle()
 					end
-			  	end)
+				end)
 				Bindable.OnInvoke = function()
 					Latte.Constructors.Window.Toggle()
 				end
@@ -190,7 +195,7 @@ module.setup = function()
 		end
 		module.update()
 	end)
-	
+
 	Latte.Modules.Services.Players.PlayerAdded:Connect(module.update)
 	Latte.Modules.Services.Players.PlayerRemoving:Connect(module.update)
 	Server.Items["Server locale"] = module.Remotes.RemoteFunction:InvokeServer("getLocale") or "N/A"

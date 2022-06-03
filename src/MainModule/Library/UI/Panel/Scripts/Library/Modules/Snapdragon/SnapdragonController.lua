@@ -31,7 +31,7 @@ local OptionsInterfaceCheck = t.interface({
 local SnapdragonController = {}
 SnapdragonController.__index = SnapdragonController
 
-local controllers = setmetatable({}, {__mode = "k"})
+local controllers = setmetatable({}, { __mode = "k" })
 
 function SnapdragonController.new(gui, options)
 	options = objectAssign({
@@ -142,7 +142,6 @@ function SnapdragonController:__bindControllerBehaviour()
 	local dragStart
 	local startPos
 
-
 	local function update(input)
 		local snapHorizontalMargin = self.snapHorizontalMargin
 		local snapVerticalMargin = self.snapVerticalMargin
@@ -209,10 +208,7 @@ function SnapdragonController:__bindControllerBehaviour()
 			end
 
 			if dragPositionMode == "Offset" then
-				gui.Position = UDim2.new(
-					startPos.X.Scale, resultingOffsetX,
-					startPos.Y.Scale, resultingOffsetY
-				)
+				gui.Position = UDim2.new(startPos.X.Scale, resultingOffsetX, startPos.Y.Scale, resultingOffsetY)
 			else
 				gui.Position = UDim2.new(
 					startPos.X.Scale + (resultingOffsetX / screenSize.X),
@@ -229,51 +225,48 @@ function SnapdragonController:__bindControllerBehaviour()
 				)
 			end
 
-			gui.Position =
-				UDim2.new(
-					startPos.X.Scale,
-					startPos.X.Offset + delta.X,
-					startPos.Y.Scale,
-					startPos.Y.Offset + delta.Y
-				)
+			gui.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
 		end
 	end
 
-	maid.guiInputBegan = gui.InputBegan:Connect(
-		function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = true
-				dragStart = input.Position
-				startPos = (dragGui or gui).Position
-				DragBegan:Fire(dragStart)
+	maid.guiInputBegan = gui.InputBegan:Connect(function(input)
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
+			dragging = true
+			dragStart = input.Position
+			startPos = (dragGui or gui).Position
+			DragBegan:Fire(dragStart)
 
-				input.Changed:Connect(
-					function()
-						if input.UserInputState == Enum.UserInputState.End then
-							dragging = false
-							DragEnded:Fire(input.Position)
-						end
-					end
-				)
-			end
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+					DragEnded:Fire(input.Position)
+				end
+			end)
 		end
-	)
+	end)
 
-	maid.guiInputChanged = gui.InputChanged:Connect(
-		function(input)
-			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-				dragInput = input
-			end
+	maid.guiInputChanged = gui.InputChanged:Connect(function(input)
+		if
+			input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
+			dragInput = input
 		end
-	)
+	end)
 
-	maid.uisInputChanged = UserInputService.InputChanged:Connect(
-		function(input)
-			if input == dragInput and dragging then
-				update(input)
-			end
+	maid.uisInputChanged = UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
 		end
-	)
+	end)
 end
 
 function SnapdragonController:Connect()

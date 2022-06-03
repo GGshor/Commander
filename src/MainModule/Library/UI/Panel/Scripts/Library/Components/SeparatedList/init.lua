@@ -14,7 +14,7 @@ module.new = function(Name: string, Title: string?, Parent: Instance)
 		["Name"] = Name,
 		["Title"] = Comp.Container.Title.Text,
 		["Items"] = {},
-		["Parent"] = Parent
+		["Parent"] = Parent,
 	}
 
 	t.Items = setmetatable({}, {

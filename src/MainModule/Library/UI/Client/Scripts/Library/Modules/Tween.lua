@@ -6,7 +6,7 @@ function module.new(object: Instance, tweeninfo: TweenInfo, goal): Tween
 	tween.Completed:Connect(function()
 		tween:Destroy()
 	end)
-	
+
 	tween:Play()
 	return tween
 end

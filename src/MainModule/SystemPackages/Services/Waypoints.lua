@@ -10,12 +10,14 @@ function module.new(client: string, action: string, attachment)
 		Client = client,
 		Action = action,
 		Attachments = attachment,
-		Timestamp = os.time()
+		Timestamp = os.time(),
 	})
 end
 
 return setmetatable({}, {
 	__index = module,
 	__metatable = "The metatable is locked",
-	__newindex = function() error("Attempt to modify a readonly table", 2) end
+	__newindex = function()
+		error("Attempt to modify a readonly table", 2)
+	end,
 })

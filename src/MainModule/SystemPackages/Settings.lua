@@ -41,7 +41,7 @@ module.Permissions = {
 		["Priority"] = 1,
 		["DisallowPrefixes"] = {
 			"All",
-			"Others"
+			"Others",
 		},
 		["Permissions"] = {
 			"Kick",
@@ -51,8 +51,8 @@ module.Permissions = {
 			"Message",
 			"HandTo",
 			"View",
-			"Unview"
-		}
+			"Unview",
+		},
 	},
 	["Admin"] = {
 		["Inherits"] = "Moderator",
@@ -63,31 +63,31 @@ module.Permissions = {
 			"TimeBan",
 			"Unban",
 			"SystemMessage",
-			"ServerLock"
-		}
+			"ServerLock",
+		},
 	},
 	["Owner"] = {
 		["Inherits"] = "Admin",
 		["Priority"] = 3,
 		["Permissions"] = {
-			"*"
-		}
-	}
+			"*",
+		},
+	},
 }
 
 module.UI = {
 	["Accent"] = Color3.fromRGB(64, 157, 130),
 	["Keybind"] = Enum.KeyCode.Semicolon,
-	["Theme"] = "Minimal Dark"
+	["Theme"] = "Minimal Dark",
 }
 
 module.Misc = {
 	["DisableCredits"] = false,
 	["DataStoresKey"] = {
-		["Ban"] = "commander.bans"
-	}
+		["Ban"] = "commander.bans",
+	},
 }
 
-module.Version = {"1.4.3", "1.4.3 (Official Build)", "Lilium"}
+module.Version = { "1.4.3", "1.4.3 (Official Build)", "Lilium" }
 
 return module

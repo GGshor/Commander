@@ -10,7 +10,10 @@ module.new = function(Parent: GuiObject, Reaction, ZIndex: number?, UseInputEven
 	Button.Text = ""
 
 	Button.InputBegan:Connect(function(InputObject)
-		if InputObject.UserInputType == Enum.UserInputType.Touch or InputObject.UserInputType == Enum.UserInputType.MouseMovement then
+		if
+			InputObject.UserInputType == Enum.UserInputType.Touch
+			or InputObject.UserInputType == Enum.UserInputType.MouseMovement
+		then
 			Reaction(Parent, "Hover")
 		end
 	end)

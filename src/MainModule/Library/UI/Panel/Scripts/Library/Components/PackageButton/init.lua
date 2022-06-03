@@ -15,8 +15,8 @@ module.new = function(Title: string, Description: string, Parent: Instance)
 		["Object"] = comp,
 		["Parent"] = Parent,
 		["Events"] = {
-			["Clicked"] = Instance.new("BindableEvent")
-		}
+			["Clicked"] = Instance.new("BindableEvent"),
+		},
 	}
 
 	local function cook()

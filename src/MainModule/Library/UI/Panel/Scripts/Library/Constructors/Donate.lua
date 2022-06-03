@@ -1,9 +1,9 @@
 local module, Elements, Latte, Page = {}, nil, nil, nil
 local Items = {
-	{Value = "50", Id = 6502090560},
-	{Value = "150", Id = 6502091736},
-	{Value = "300", Id = 6502092150},
-	{Value = "1000", Id = 6502104947}
+	{ Value = "50", Id = 6502090560 },
+	{ Value = "150", Id = 6502091736 },
+	{ Value = "300", Id = 6502092150 },
+	{ Value = "1000", Id = 6502104947 },
 }
 
 module.prepare = function()
@@ -31,10 +31,10 @@ module.prepare = function()
 
 	local UIGradient = Instance.new("UIGradient")
 	UIGradient.Rotation = 90
-	UIGradient.Transparency = NumberSequence.new{
+	UIGradient.Transparency = NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0),
-		NumberSequenceKeypoint.new(1, 1)
-	}
+		NumberSequenceKeypoint.new(1, 1),
+	})
 	UIGradient.Parent = Background
 
 	local Icon = Instance.new("ImageLabel")
@@ -73,7 +73,8 @@ module.prepare = function()
 	Subtitle.LayoutOrder = 2
 	Subtitle.Name = "Subtitle"
 	Subtitle.Size = UDim2.new(0.9, 0, 0, 32)
-	Subtitle.Text = "While Commander is a free and open-source project, donations are what keeping us to work on this awesome thing."
+	Subtitle.Text =
+		"While Commander is a free and open-source project, donations are what keeping us to work on this awesome thing."
 	Subtitle.TextColor3 = Latte.Modules.Stylesheet.Donate.ParagraphColor
 	Subtitle.TextSize = 14
 	Subtitle.TextWrapped = true
@@ -97,10 +98,18 @@ module.prepare = function()
 		Top.BackgroundColor3 = Latte.Modules.Stylesheet.Donate.TopBackgroundColor
 	end
 
-	for i,v in pairs(Items) do
-		local Button = Latte.Components.OutlinedButton.new(v.Value, "Donate " .. tostring(v.Value) .. " Robux", Page, function()
-			Latte.Modules.Services.MarketplaceService:PromptGamePassPurchase(Latte.Modules.Services.Players.LocalPlayer, v.Id)
-		end)
+	for i, v in pairs(Items) do
+		local Button = Latte.Components.OutlinedButton.new(
+			v.Value,
+			"Donate " .. tostring(v.Value) .. " Robux",
+			Page,
+			function()
+				Latte.Modules.Services.MarketplaceService:PromptGamePassPurchase(
+					Latte.Modules.Services.Players.LocalPlayer,
+					v.Id
+				)
+			end
+		)
 
 		Button.Size = UDim2.new(1, -20, 0, Button.Size.Y.Offset)
 		Button.LayoutOrder = i + 1

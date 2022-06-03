@@ -5,7 +5,7 @@
 local ERROR_NON_PROMISE_IN_LIST = "Non-promise value passed into %s at index %s"
 local ERROR_NON_LIST = "Please pass a list of promises to %s"
 local ERROR_NON_FUNCTION = "Please pass a handler function to %s!"
-local MODE_KEY_METATABLE = {__mode = "k"}
+local MODE_KEY_METATABLE = { __mode = "k" }
 
 --[[
 	Creates an enum dictionary with some metamethods to prevent common mistakes.
@@ -32,7 +32,8 @@ end
 	Promises that experience an error like this will be rejected with
 	an instance of this object.
 ]]
-local Error do
+local Error
+do
 	Error = {
 		Kind = makeEnum("Promise.Error.Kind", {
 			"ExecutionError",
@@ -98,10 +99,13 @@ local Error do
 		}
 
 		for _, runtimeError in ipairs(self:getErrorChain()) do
-			table.insert(errorStrings, table.concat({
-				runtimeError.trace or runtimeError.error,
-				runtimeError.context,
-			}, "\n"))
+			table.insert(
+				errorStrings,
+				table.concat({
+					runtimeError.trace or runtimeError.error,
+					runtimeError.context,
+				}, "\n")
+			)
 		end
 
 		return table.concat(errorStrings, "\n")
@@ -123,7 +127,6 @@ end
 local function packResult(success, ...)
 	return success, select("#", ...), { ... }
 end
-
 
 local function makeErrorHandler(traceback)
 	assert(traceback ~= nil)
@@ -174,7 +177,7 @@ end
 
 local Promise = {
 	Error = Error,
-	Status = makeEnum("Promise.Status", {"Started", "Resolved", "Rejected", "Cancelled"}),
+	Status = makeEnum("Promise.Status", { "Started", "Resolved", "Rejected", "Cancelled" }),
 	_getTime = os.clock,
 	_timeEvent = game:GetService("RunService").Heartbeat,
 }
@@ -259,13 +262,7 @@ function Promise._new(traceback, callback, parent)
 	end
 
 	coroutine.wrap(function()
-		local ok, _, result = runExecutor(
-			self._source,
-			callback,
-			resolve,
-			reject,
-			onCancel
-		)
+		local ok, _, result = runExecutor(self._source, callback, resolve, reject, onCancel)
 
 		if not ok then
 			reject(result[1])
@@ -412,21 +409,18 @@ function Promise._all(traceback, promises, amount)
 		-- We can assume the values inside `promises` are all promises since we
 		-- checked above.
 		for i, promise in ipairs(promises) do
-			newPromises[i] = promise:andThen(
-				function(...)
-					resolveOne(i, ...)
-				end,
-				function(...)
-					rejectedCount = rejectedCount + 1
+			newPromises[i] = promise:andThen(function(...)
+				resolveOne(i, ...)
+			end, function(...)
+				rejectedCount = rejectedCount + 1
 
-					if amount == nil or #promises - rejectedCount < amount then
-						cancel()
-						done = true
+				if amount == nil or #promises - rejectedCount < amount then
+					cancel()
+					done = true
 
-						reject(...)
-					end
+					reject(...)
 				end
-			)
+			end)
 		end
 
 		if done then
@@ -510,11 +504,9 @@ function Promise.allSettled(promises)
 		-- We can assume the values inside `promises` are all promises since we
 		-- checked above.
 		for i, promise in ipairs(promises) do
-			newPromises[i] = promise:finally(
-				function(...)
-					resolveOne(i, ...)
-				end
-			)
+			newPromises[i] = promise:finally(function(...)
+				resolveOne(i, ...)
+			end)
 		end
 	end)
 end
@@ -541,7 +533,7 @@ function Promise.race(promises)
 		end
 
 		local function finalize(callback)
-			return function (...)
+			return function(...)
 				cancel()
 				finished = true
 				return callback(...)
@@ -681,8 +673,8 @@ function Promise.is(object)
 		return type(object.andThen) == "function"
 	elseif
 		type(objectMetatable) == "table"
-			and type(rawget(objectMetatable, "__index")) == "table"
-			and type(rawget(rawget(objectMetatable, "__index"), "andThen")) == "function"
+		and type(rawget(objectMetatable, "__index")) == "table"
+		and type(rawget(rawget(objectMetatable, "__index"), "andThen")) == "function"
 	then
 		-- Maybe this came from a different or older Promise library.
 		return true
@@ -842,22 +834,12 @@ function Promise.prototype:_andThen(traceback, successHandler, failureHandler)
 
 		local successCallback = resolve
 		if successHandler then
-			successCallback = createAdvancer(
-				traceback,
-				successHandler,
-				resolve,
-				reject
-			)
+			successCallback = createAdvancer(traceback, successHandler, resolve, reject)
 		end
 
 		local failureCallback = reject
 		if failureHandler then
-			failureCallback = createAdvancer(
-				traceback,
-				failureHandler,
-				resolve,
-				reject
-			)
+			failureCallback = createAdvancer(traceback, failureHandler, resolve, reject)
 		end
 
 		if self._status == Promise.Status.Started then
@@ -1002,12 +984,7 @@ function Promise.prototype:_finally(traceback, finallyHandler, onlyOk)
 	return Promise._new(traceback, function(resolve, reject)
 		local finallyCallback = resolve
 		if finallyHandler then
-			finallyCallback = createAdvancer(
-				traceback,
-				finallyHandler,
-				resolve,
-				reject
-			)
+			finallyCallback = createAdvancer(traceback, finallyHandler, resolve, reject)
 		end
 
 		if onlyOk then
@@ -1180,8 +1157,7 @@ function Promise.prototype:_resolve(...)
 		-- Without this warning, arguments sometimes mysteriously disappear
 		if select("#", ...) > 1 then
 			local message = string.format(
-				"When returning a Promise from andThen, extra arguments are " ..
-					"discarded! See:\n\n%s",
+				"When returning a Promise from andThen, extra arguments are " .. "discarded! See:\n\n%s",
 				self._source
 			)
 			warn(message)
@@ -1189,36 +1165,33 @@ function Promise.prototype:_resolve(...)
 
 		local chainedPromise = ...
 
-		local promise = chainedPromise:andThen(
-			function(...)
-				self:_resolve(...)
-			end,
-			function(...)
-				local maybeRuntimeError = chainedPromise._values[1]
+		local promise = chainedPromise:andThen(function(...)
+			self:_resolve(...)
+		end, function(...)
+			local maybeRuntimeError = chainedPromise._values[1]
 
-				-- Backwards compatibility < v2
-				if chainedPromise._error then
-					maybeRuntimeError = Error.new({
-						error = chainedPromise._error,
-						kind = Error.Kind.ExecutionError,
-						context = "[No stack trace available as this Promise originated from an older version of the Promise library (< v2)]",
-					})
-				end
-
-				if Error.isKind(maybeRuntimeError, Error.Kind.ExecutionError) then
-					return self:_reject(maybeRuntimeError:extend({
-						error = "This Promise was chained to a Promise that errored.",
-						trace = "",
-						context = string.format(
-							"The Promise at:\n\n%s\n...Rejected because it was chained to the following Promise, which encountered an error:\n",
-							self._source
-						),
-					}))
-				end
-
-				self:_reject(...)
+			-- Backwards compatibility < v2
+			if chainedPromise._error then
+				maybeRuntimeError = Error.new({
+					error = chainedPromise._error,
+					kind = Error.Kind.ExecutionError,
+					context = "[No stack trace available as this Promise originated from an older version of the Promise library (< v2)]",
+				})
 			end
-		)
+
+			if Error.isKind(maybeRuntimeError, Error.Kind.ExecutionError) then
+				return self:_reject(maybeRuntimeError:extend({
+					error = "This Promise was chained to a Promise that errored.",
+					trace = "",
+					context = string.format(
+						"The Promise at:\n\n%s\n...Rejected because it was chained to the following Promise, which encountered an error:\n",
+						self._source
+					),
+				}))
+			end
+
+			self:_reject(...)
+		end)
 
 		if promise._status == Promise.Status.Cancelled then
 			self:cancel()
@@ -1273,11 +1246,7 @@ function Promise.prototype:_reject(...)
 			end
 
 			-- Build a reasonable message
-			local message = string.format(
-				"Unhandled Promise rejection:\n\n%s\n\n%s",
-				err,
-				self._source
-			)
+			local message = string.format("Unhandled Promise rejection:\n\n%s\n\n%s", err, self._source)
 
 			if Promise.TEST then
 				-- Don't spam output when we're running tests.
@@ -1341,7 +1310,7 @@ function Promise.retry(callback, times, ...)
 	assert(type(callback) == "function", "Parameter #1 to Promise.retry must be a function")
 	assert(type(times) == "number", "Parameter #2 to Promise.retry must be a number")
 
-	local args, length = {...}, select("#", ...)
+	local args, length = { ... }, select("#", ...)
 
 	return Promise.resolve(callback(...)):catch(function(...)
 		if times > 0 then

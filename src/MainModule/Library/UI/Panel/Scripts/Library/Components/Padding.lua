@@ -7,11 +7,11 @@ module.new = function(Parent: Instance)
 		["Right"] = UDim.new(0, 0),
 		["Top"] = UDim.new(0, 0),
 		["Bottom"] = UDim.new(0, 0),
-		["Parent"] = Parent
+		["Parent"] = Parent,
 	}
 
 	local function cook()
-		for i,v in pairs(t) do
+		for i, v in pairs(t) do
 			if typeof(v) == "UDim" then
 				Comp["Padding" .. i] = v
 			elseif i == "Parent" then

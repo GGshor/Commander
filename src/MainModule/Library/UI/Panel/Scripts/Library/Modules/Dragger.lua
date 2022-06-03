@@ -7,14 +7,22 @@ function module.new(Trigger, Window, Callback)
 
 	local function updatePosition(Input)
 		local delta = Input.Position - dragStart
-		local calculatedPosition = UDim2.new(startPosition.X.Scale, startPosition.X.Offset + delta.X, startPosition.Y.Scale, startPosition.Y.Offset + delta.Y)
+		local calculatedPosition = UDim2.new(
+			startPosition.X.Scale,
+			startPosition.X.Offset + delta.X,
+			startPosition.Y.Scale,
+			startPosition.Y.Offset + delta.Y
+		)
 		if lastUDim2 ~= calculatedPosition then
-			module.Latte.Modules.Tween.new(Window, draggingTweenInfo, {Position = calculatedPosition})
+			module.Latte.Modules.Tween.new(Window, draggingTweenInfo, { Position = calculatedPosition })
 		end
 	end
 
 	Trigger.InputBegan:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+		if
+			Input.UserInputType == Enum.UserInputType.MouseButton1
+			or Input.UserInputType == Enum.UserInputType.Touch
+		then
 			isDragging, dragStart, startPosition = true, Input.Position, Window.Position
 			Callback(Window, "Hold")
 
@@ -28,7 +36,10 @@ function module.new(Trigger, Window, Callback)
 	end)
 
 	Trigger.InputChanged:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch then
+		if
+			Input.UserInputType == Enum.UserInputType.MouseMovement
+			or Input.UserInputType == Enum.UserInputType.Touch
+		then
 			dragInput = Input
 		end
 	end)
@@ -40,9 +51,7 @@ function module.new(Trigger, Window, Callback)
 	end)
 
 	if not Callback then
-		Callback = function()
-
-		end
+		Callback = function() end
 	end
 end
 

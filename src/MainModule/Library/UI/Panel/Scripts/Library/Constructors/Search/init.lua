@@ -3,13 +3,13 @@ local Latte, Elements, Packages = nil, nil, {}
 
 local function fetch()
 	Packages = {}
-	for _,v in pairs(Latte.Constructors.Window.Window.Pages.Players:GetChildren()) do
+	for _, v in pairs(Latte.Constructors.Window.Window.Pages.Players:GetChildren()) do
 		if string.lower(v.Name) ~= "target" and v:IsA("Frame") then
 			table.insert(Packages, v.Name)
 		end
 	end
 
-	for _,v in pairs(Latte.Constructors.Window.Window.Pages.Server:GetChildren()) do
+	for _, v in pairs(Latte.Constructors.Window.Window.Pages.Server:GetChildren()) do
 		if v:IsA("Frame") then
 			table.insert(Packages, v.Name)
 		end
@@ -33,18 +33,22 @@ module.setup = function()
 	SearchComp.Parent = Top.Parent
 
 	Searchbox.Input:GetPropertyChangedSignal("Text"):Connect(function()
-		if #Packages == 0 then fetch() end
+		if #Packages == 0 then
+			fetch()
+		end
 		for _, v in pairs(SearchComp.Container:GetChildren()) do
 			if v:IsA("TextButton") then
 				v:Destroy()
-			end 
+			end
 		end
 
 		if string.len(Searchbox.Input.Text) >= 1 then
 			local matcher = Latte.Modules.Matcher.new(Packages, true, true)
 			for i, v in pairs(matcher:match(Searchbox.Input.Text)) do
 				if i <= 3 then
-					local Location = Latte.Constructors.Window.Window.Pages.Server:FindFirstChild(v) and Latte.Constructors.Window.Window.Pages.Server or Latte.Constructors.Window.Window.Pages.Players
+					local Location = Latte.Constructors.Window.Window.Pages.Server:FindFirstChild(v)
+							and Latte.Constructors.Window.Window.Pages.Server
+						or Latte.Constructors.Window.Window.Pages.Players
 					local Item = script.Item:Clone()
 					Item.Name, Item.Title.Text = v, v
 					Item.MouseButton1Click:Connect(function()
@@ -58,7 +62,11 @@ module.setup = function()
 						wait(Latte.Modules.Stylesheet.Duration.Short)
 						Location.CanvasPosition = Vector2.new(0, 0)
 						-- TODO: Find a better way to do this, the current method is pretty hardcoded.
-						Latte.Modules.Tween.new(Location, Latte.Modules.TweenInfo.Quint(Latte.Modules.Stylesheet.Duration.Short) ,{CanvasPosition = Vector2.new(0, Location:FindFirstChild(v).AbsolutePosition.Y - 155)})
+						Latte.Modules.Tween.new(
+							Location,
+							Latte.Modules.TweenInfo.Quint(Latte.Modules.Stylesheet.Duration.Short),
+							{ CanvasPosition = Vector2.new(0, Location:FindFirstChild(v).AbsolutePosition.Y - 155) }
+						)
 					end)
 
 					Item.LayoutOrder = i
@@ -78,7 +86,13 @@ module.setup = function()
 		Searchbox.Input:CaptureFocus()
 		Searchbox.Visible = true
 		SearchComp.Visible = true
-	end).Image.Size = UDim2.new(0.35, 0, 0.35, 0)
+	end).Image.Size =
+		UDim2.new(
+			0.35,
+			0,
+			0.35,
+			0
+		)
 
 	QuitSearch.ZIndex = 3
 	QuitSearch.Image.ImageColor3 = Color3.fromRGB(150, 150, 150)

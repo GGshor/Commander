@@ -9,7 +9,7 @@ module.new = function(Name: string, Parent: Instance)
 	local t = {
 		["Name"] = Name,
 		["Items"] = {},
-		["Parent"] = Parent
+		["Parent"] = Parent,
 	}
 
 	t.Items = setmetatable({}, {

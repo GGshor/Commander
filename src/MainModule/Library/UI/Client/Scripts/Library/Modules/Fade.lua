@@ -15,7 +15,7 @@
 ]]
 
 -- services
-local TweenService = game:GetService('TweenService')
+local TweenService = game:GetService("TweenService")
 
 -- variables
 
@@ -23,15 +23,15 @@ local defaultTweenInfo = TweenInfo.new(0)
 
 -- module table
 local transparency = {
-	Cache = {}
+	Cache = {},
 }
 
 -- the cacheable properties
 local properties = {
-	'BackgroundTransparency',
-	'ImageTransparency',
-	'TextTransparency',
-	'TextStrokeTransparency'
+	"BackgroundTransparency",
+	"ImageTransparency",
+	"TextTransparency",
+	"TextStrokeTransparency",
 }
 
 -- local functions
@@ -39,7 +39,9 @@ local function CreateCache(object, mainCache)
 	local cache = {}
 
 	for _, property in next, properties do
-		if pcall(function() return object[property] end) then
+		if pcall(function()
+			return object[property]
+		end) then
 			cache[property] = object[property]
 		end
 	end

@@ -7,7 +7,7 @@ local module = {
 
 local isClosed, reason = false, ""
 
-module.Execute = function(Client, Type, Attachment)			
+module.Execute = function(Client, Type, Attachment)
 	if Type == "command" then
 		local Input = module.API.sendModalToPlayer(Client).Event:Wait()
 

@@ -10,7 +10,7 @@ module.Window.TopbarElementsColor = Color3.fromRGB(255, 255, 255)
 module.Window.AccentColor = Color3.fromRGB(45, 45, 45)
 module.Window.BackgroundColor = Color3.fromRGB(25, 25, 25)
 module.Window.ScrollBarColor = Color3.fromRGB(250, 250, 250)
-module.Window.TopbarBackgroundColorIfAccentUsed = Color3.fromRGB(35,35,35)
+module.Window.TopbarBackgroundColorIfAccentUsed = Color3.fromRGB(35, 35, 35)
 module.Window.TopbarElementColorIfAccentUsed = Color3.fromRGB(150, 150, 150)
 module.Window.TopbarUseAccentInstead = true
 
@@ -80,7 +80,7 @@ module.About.SubtitleColor = module.TextField.PlaceholderColor
 -- Duration for tweens
 module.Duration = {
 	VeryShort = 0.15,
-	Short = 0.3
+	Short = 0.3,
 }
 
 return module

@@ -19,7 +19,7 @@ local activeElements = {}
 
 local Bindable = Elements.Event
 
-local function playAudio(Id: number|string, Volume: number?, Parent: Instance): Sound
+local function playAudio(Id: number | string, Volume: number?, Parent: Instance): Sound
 	local audio = Instance.new("Sound")
 	audio.SoundId = "rbxassetid://" .. Id
 	audio.Volume = Volume or 1
@@ -27,14 +27,14 @@ local function playAudio(Id: number|string, Volume: number?, Parent: Instance): 
 	audio.Ended:Connect(function()
 		audio:Destroy()
 	end)
-	
+
 	audio:Play()
 	return audio
 end
 
 local function onCall(Type: string, Protocol: string?, Attachment)
 	pcall(coroutine.wrap(function()
-		local supportedTypes = {"newNotify", "newMessage", "newHint", "newNotifyWithAction"}
+		local supportedTypes = { "newNotify", "newMessage", "newHint", "newNotifyWithAction" }
 		if table.find(supportedTypes, Type) then
 			if activeElements.Audio == nil then
 				activeElements.Audio = true
@@ -44,12 +44,12 @@ local function onCall(Type: string, Protocol: string?, Attachment)
 			end
 		end
 	end))
-	
+
 	if Type == "newMessage" then
 		if activeElements.Message then
 			activeElements.Message:dismiss()
 		end
-		
+
 		activeElements.Message = Message.new(Attachment.From, Attachment.Content, Attachment.Duration, Elements)
 		activeElements.Message:deploy()
 	elseif Type == "newHint" then
@@ -62,13 +62,13 @@ local function onCall(Type: string, Protocol: string?, Attachment)
 	elseif Type == "newNotify" then
 		local notification = Notification.new(Attachment.From, Attachment.Content, Elements.List)
 		notification:deploy()
-		
+
 		local interacted = notification.onDismiss.Event:Wait()
 		if interacted then
 			local expanded = ExpandedNotification.new(Attachment.From, Attachment.Content, Elements)
 			expanded._object.Bottom.Primary.Content.Text = "Okay"
 			expanded:deploy()
-			
+
 			Notification.stopDismissing = true
 			expanded.onDismiss.Event:Wait()
 			Notification.stopDismissing = false
@@ -76,13 +76,13 @@ local function onCall(Type: string, Protocol: string?, Attachment)
 	elseif Type == "newNotifyWithAction" then
 		local notification = Notification.new(Attachment.From, Attachment.Content, Elements.List)
 		notification:deploy()
-		
+
 		local interacted = notification.onDismiss.Event:Wait()
-		if interacted then		
+		if interacted then
 			local expanded = ExpandedNotification.new(Attachment.From, Attachment.Content, Elements)
 			expanded._object.Bottom.Primary.Content.Text = Protocol.Type
 			expanded:deploy()
-			
+
 			Notification.stopDismissing = true
 			local response = expanded.onDismiss.Event:Wait()
 			Notification.stopDismissing = false

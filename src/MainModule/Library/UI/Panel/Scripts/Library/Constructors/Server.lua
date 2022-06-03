@@ -8,7 +8,7 @@ module.prepare = function()
 end
 
 module.update = function()
-	for i,v in pairs(Packages) do
+	for i, v in pairs(Packages) do
 		if v.Location:lower() == "server" then
 			local Comp = Latte.Components.PackageButton.new(v.Name, v.Description, Page)
 			Comp.Events.Clicked.Event:Connect(function()

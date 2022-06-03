@@ -12,8 +12,8 @@ module.new = function(Title: string, Placeholder: string, Parent: Instance)
 		["Content"] = "",
 		["Parent"] = Parent,
 		["Events"] = {
-			["ContentChanged"] = ContentChanged.Event
-		}
+			["ContentChanged"] = ContentChanged.Event,
+		},
 	}
 
 	local function cook()

@@ -4,8 +4,8 @@ local Packages = {}
 local function fetch(Input: string)
 	local t = {}
 	local matchObject
-	for i,v in pairs(Latte.Modules.Services.Players:GetPlayers()) do
-		table.insert(t, #t+1, v.Name)
+	for i, v in pairs(Latte.Modules.Services.Players:GetPlayers()) do
+		table.insert(t, #t + 1, v.Name)
 	end
 
 	matchObject = Latte.Modules.Matcher.new(t, true, true)
@@ -27,7 +27,9 @@ module.prepare = function()
 			if content then
 				Suggestion.Object.Visible = true
 				Suggested = content
-				Suggestion.Title = Latte.Modules.Services.Players:FindFirstChild(content).DisplayName == content and Latte.Modules.Services.Players:FindFirstChild(content).Name or Latte.Modules.Services.Players:FindFirstChild(content).DisplayName .. " (@" .. content .. ")"
+				Suggestion.Title = Latte.Modules.Services.Players:FindFirstChild(content).DisplayName == content
+						and Latte.Modules.Services.Players:FindFirstChild(content).Name
+					or Latte.Modules.Services.Players:FindFirstChild(content).DisplayName .. " (@" .. content .. ")"
 				Suggestion.Description = Latte.Modules.Services.Players:FindFirstChild(content).UserId
 			else
 				Suggestion.Object.Visible = false
@@ -44,13 +46,17 @@ module.prepare = function()
 end
 
 module.update = function()
-	for i,v in pairs(Packages) do
+	for i, v in pairs(Packages) do
 		if v.Location:lower() == "player" then
 			local Comp = Latte.Components.PackageButton.new(v.Name, v.Description, Page)
 			Comp.Events.Clicked.Event:Connect(function()
 				if string.gsub(TextField.Content, "%s", "") then
 					if string.len(string.gsub(TextField.Content, "%s", "")) >= 1 then
-						module.Remotes.RemoteFunction:InvokeServer("command", v.Protocol, string.gsub(TextField.Content, "%s", ""))
+						module.Remotes.RemoteFunction:InvokeServer(
+							"command",
+							v.Protocol,
+							string.gsub(TextField.Content, "%s", "")
+						)
 					else
 						Latte.Constructors.Window.notifyUser(nil, "Player parameter must not be empty!")
 					end

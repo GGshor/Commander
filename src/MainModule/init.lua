@@ -3,14 +3,13 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 return function(Settings, CustomPackages, Stylesheets)
-
 	-- BUILDER
 	script.SystemPackages.Settings:Destroy()
 	Settings.Name = "Settings"
 	CustomPackages.Name = "Custom"
 	CustomPackages.Parent = script.Packages
 	Settings.Parent = script.SystemPackages
-	for _,v in pairs(Stylesheets:GetChildren()) do
+	for _, v in pairs(Stylesheets:GetChildren()) do
 		if v:IsA("ModuleScript") then
 			v.Parent = script.Library.UI.Stylesheets
 		end
@@ -24,10 +23,11 @@ return function(Settings, CustomPackages, Stylesheets)
 	local isPlayerAddedFired = false
 	local remotes = {
 		Function = Instance.new("RemoteFunction"),
-		Event = Instance.new("RemoteEvent")
+		Event = Instance.new("RemoteEvent"),
 	}
 
-	local packages, packagesButtons, systemPackages, permissionTable, disableTable, cachedData, sharedCommons = {}, {}, {}, {}, {}, {}, {}
+	local packages, packagesButtons, systemPackages, permissionTable, disableTable, cachedData, sharedCommons =
+		{}, {}, {}, {}, {}, {}, {}
 	local currentTheme = nil
 
 	remotefolder.Name = "Commander Remotes"
@@ -45,7 +45,7 @@ return function(Settings, CustomPackages, Stylesheets)
 						Protocol = mod.Name,
 						Description = mod.Description,
 						Location = mod.Location,
-						PackageId = package.Name
+						PackageId = package.Name,
 					}
 				end
 			end)
@@ -55,11 +55,19 @@ return function(Settings, CustomPackages, Stylesheets)
 	-- Added by TurtleIdiot: used to recursively navigate inheritance when actually building permission tables
 	local function buildTempPermissions(permissions, group, groupconfig)
 		local temptable = {}
-		if groupconfig["Inherits"] and permissions[groupconfig["Inherits"]] and permissions[groupconfig["Inherits"]]["Permissions"] then
-			for _,perm in ipairs(permissions[groupconfig["Inherits"]]["Permissions"]) do
+		if
+			groupconfig["Inherits"]
+			and permissions[groupconfig["Inherits"]]
+			and permissions[groupconfig["Inherits"]]["Permissions"]
+		then
+			for _, perm in ipairs(permissions[groupconfig["Inherits"]]["Permissions"]) do
 				table.insert(temptable, perm)
 			end
-			local inherited = buildTempPermissions(permissions, groupconfig["Inherits"], permissions[groupconfig["Inherits"]])
+			local inherited = buildTempPermissions(
+				permissions,
+				groupconfig["Inherits"],
+				permissions[groupconfig["Inherits"]]
+			)
 			if inherited ~= false then
 				for _, perm in ipairs(inherited) do
 					table.insert(temptable, perm)
@@ -75,11 +83,11 @@ return function(Settings, CustomPackages, Stylesheets)
 	local function buildPermissionTables()
 		local permissions = systemPackages.Settings["Permissions"]
 
-		for i,v in pairs(permissions) do
+		for i, v in pairs(permissions) do
 			permissionTable[i] = {}
 
 			if v["Permissions"] then
-				for _,perm in ipairs(v["Permissions"]) do
+				for _, perm in ipairs(v["Permissions"]) do
 					permissionTable[i][perm] = true
 				end
 			end
@@ -87,7 +95,7 @@ return function(Settings, CustomPackages, Stylesheets)
 			if v["Inherits"] and permissions[v["Inherits"]] and permissions[v["Inherits"]]["Permissions"] then
 				local inherited = buildTempPermissions(permissions, i, v)
 				if inherited ~= false then
-					for _,perm in ipairs(inherited) do
+					for _, perm in ipairs(inherited) do
 						permissionTable[i][perm] = true
 					end
 				end
@@ -99,11 +107,11 @@ return function(Settings, CustomPackages, Stylesheets)
 	local function buildDisableTables()
 		local permissions = systemPackages.Settings["Permissions"]
 
-		for i,v in pairs(permissions) do
+		for i, v in pairs(permissions) do
 			disableTable[i] = {}
 
 			if v["DisallowPrefixes"] then
-				for _,disallow in ipairs(v["DisallowPrefixes"]) do
+				for _, disallow in ipairs(v["DisallowPrefixes"]) do
 					disableTable[i][disallow:lower()] = true
 				end
 			end
@@ -123,7 +131,7 @@ return function(Settings, CustomPackages, Stylesheets)
 		buildDisableTables()
 		systemPackages.API.PermissionTable = permissionTable
 		systemPackages.API.DisableTable = disableTable
-		systemPackages.Settings.Version = {"1.5.0", "1.5.0 (Official Build)", "Lilium"}
+		systemPackages.Settings.Version = { "1.5.0", "1.5.0 (Official Build)", "Lilium" }
 
 		--@OVERRIDE
 		systemPackages.Settings.LatestVersion, systemPackages.Settings.IsHttpEnabled = "1.5.0", true
@@ -138,7 +146,7 @@ return function(Settings, CustomPackages, Stylesheets)
 		end
 		--
 
-		for i,v in pairs(systemPackages) do
+		for i, v in pairs(systemPackages) do
 			for index, value in pairs(systemPackages) do
 				if systemPackages[index] ~= v and typeof(v) ~= "function" and i ~= "Settings" then
 					v.Remotes = remotes
@@ -147,7 +155,7 @@ return function(Settings, CustomPackages, Stylesheets)
 			end
 		end
 
-		for _,v in pairs(script.Packages:GetDescendants()) do
+		for _, v in pairs(script.Packages:GetDescendants()) do
 			if v:IsA("ModuleScript") and not v.Parent:IsA("ModuleScript") then
 				local ok, response = pcall(function()
 					local mod = require(v)
@@ -170,7 +178,13 @@ return function(Settings, CustomPackages, Stylesheets)
 				end)
 
 				if not ok then
-					error("\n\nOh snap! Commander encountered a fatal error while trying to compile commands in the runtime...\n\nAffected files: game." .. v:GetFullName() .. ".lua\nError message: " .. response .. "\n\n")
+					error(
+						"\n\nOh snap! Commander encountered a fatal error while trying to compile commands in the runtime...\n\nAffected files: game."
+							.. v:GetFullName()
+							.. ".lua\nError message: "
+							.. response
+							.. "\n\n"
+					)
 				end
 			end
 		end
@@ -209,9 +223,13 @@ return function(Settings, CustomPackages, Stylesheets)
 				if systemPackages.API.checkHasPermission(Client.UserId, packages[Protocol].PackageId) then
 					local status = packages[Protocol].Execute(Client, Type, Attachment)
 					if status then
-						systemPackages.Services.Waypoints.new(Client.Name, packages[Protocol].Name, {Attachment})
+						systemPackages.Services.Waypoints.new(Client.Name, packages[Protocol].Name, { Attachment })
 					elseif status == nil then
-						systemPackages.Services.Waypoints.new(Client.Name, packages[Protocol].Name .. " (TRY)", {Attachment})
+						systemPackages.Services.Waypoints.new(
+							Client.Name,
+							packages[Protocol].Name .. " (TRY)",
+							{ Attachment }
+						)
 					end
 				else
 					warn(Client.UserId, "does not have permission to run", Protocol)
@@ -242,25 +260,43 @@ return function(Settings, CustomPackages, Stylesheets)
 				CollectionService:AddTag(Client, "commander.admins")
 
 				-- Filter out commands that the user doesn't have access to.
-				local packagesButtonsFiltered = {};
+				local packagesButtonsFiltered = {}
 
-				for i,v in ipairs(packagesButtons) do
+				for i, v in ipairs(packagesButtons) do
 					if systemPackages.API.checkHasPermission(Client.UserId, v.PackageId) then
 						table.insert(packagesButtonsFiltered, v)
 					end
 				end
 
 				remotes.Event:FireClient(Client, "fetchCommands", "n/a", packagesButtonsFiltered)
-				remotes.Event:FireClient(Client, "fetchAdminLevel", "n/a", systemPackages.API.getAdminLevel(Client.UserId))
-				systemPackages.API.Players.message(Client, "System", "Welcome to Commander " .. systemPackages.Settings.Version[1] .. ", you are now authorized (ranked as " .. systemPackages.API.getAdminLevel(Client.UserId) .. ")\n\n Open the panel either with the keybind or the Command button at the top right hand corner.", 30)
+				remotes.Event:FireClient(
+					Client,
+					"fetchAdminLevel",
+					"n/a",
+					systemPackages.API.getAdminLevel(Client.UserId)
+				)
+				systemPackages.API.Players.message(
+					Client,
+					"System",
+					"Welcome to Commander "
+						.. systemPackages.Settings.Version[1]
+						.. ", you are now authorized (ranked as "
+						.. systemPackages.API.getAdminLevel(Client.UserId)
+						.. ")\n\n Open the panel either with the keybind or the Command button at the top right hand corner.",
+					30
+				)
 			elseif Type == "getSettings" then
 				return systemPackages.Settings
 			elseif Type == "getLocale" then
 				if cachedData.serverlocale then
 					return cachedData.serverlocale
 				else
-					local ok , response = systemPackages.Services.Promise.new(function(Resolve, Reject)
-						local ok, data = pcall(systemPackages.Services.HttpService.GetAsync, systemPackages.Services.HttpService, "http://ip-api.com/json/")
+					local ok, response = systemPackages.Services.Promise.new(function(Resolve, Reject)
+						local ok, data = pcall(
+							systemPackages.Services.HttpService.GetAsync,
+							systemPackages.Services.HttpService,
+							"http://ip-api.com/json/"
+						)
 						if ok then
 							data = systemPackages.Services.HttpService:JSONDecode(data).countryCode
 							Resolve(data)
@@ -316,7 +352,7 @@ return function(Settings, CustomPackages, Stylesheets)
 
 	-- for situations where PlayerAdded will not work as expected in Studio
 	if not isPlayerAddedFired then
-		for i,v in pairs(Players:GetPlayers()) do
+		for i, v in pairs(Players:GetPlayers()) do
 			setupUIForPlayer(v)
 		end
 	end

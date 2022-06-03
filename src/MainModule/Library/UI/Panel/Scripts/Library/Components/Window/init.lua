@@ -54,7 +54,7 @@ local function giveMenu(Menu: GuiObject)
 
 	t.setActive = function(Name: string)
 		if t.Buttons[Name] then
-			for i,v in pairs(t.Buttons) do
+			for i, v in pairs(t.Buttons) do
 				if i ~= Name then
 					v.Toggle(false)
 				else
@@ -71,7 +71,7 @@ local function giveMenu(Menu: GuiObject)
 			local comp = Latte.Components.MenuButton.new(Name, Name, Menu.Container.List, function()
 				t.Toggle()
 				Callback()
-				for i,v in pairs(t.Buttons) do
+				for i, v in pairs(t.Buttons) do
 					if i ~= Name then
 						v.Toggle(false)
 					end
@@ -95,7 +95,7 @@ module.new = function(Name: string, Title: string?, Size: Vector2?, ShowMenu: bo
 	local Latte = module.Latte
 	local Stylesheet = Latte.Modules.Stylesheet
 	local comp = script.Comp:Clone()
-	Latte.Modules.Snapdragon.createDragController(comp.Container.Top, {SnapEnabled = true, DragGui = comp}):Connect()
+	Latte.Modules.Snapdragon.createDragController(comp.Container.Top, { SnapEnabled = true, DragGui = comp }):Connect()
 	local Toggled = true
 
 	local window = {
@@ -106,10 +106,10 @@ module.new = function(Name: string, Title: string?, Size: Vector2?, ShowMenu: bo
 		["ZIndex"] = 1,
 		["Pages"] = comp.Container.Body,
 		["Events"] = {
-			["Toggled"] = Instance.new("BindableEvent")
+			["Toggled"] = Instance.new("BindableEvent"),
 		},
 		["ShowMenu"] = ShowMenu or false,
-		["Menu"] = giveMenu(comp.Container.Menu)
+		["Menu"] = giveMenu(comp.Container.Menu),
 	}
 
 	window.newButton = function(Name: string, Image: string, Side: string, Position: number, Callback)
@@ -140,7 +140,9 @@ module.new = function(Name: string, Title: string?, Size: Vector2?, ShowMenu: bo
 	window.removePage = function(Name: string, NewPage: string)
 		local page = window.Pages:FindFirstChild(Name)
 
-		if not page then return end
+		if not page then
+			return
+		end
 
 		if window.CurrentPage == page then
 			window.switchPage(NewPage)
@@ -155,7 +157,9 @@ module.new = function(Name: string, Title: string?, Size: Vector2?, ShowMenu: bo
 	end
 
 	window.switchPage = function(Page: string)
-		if tostring(window.CurrentPage):lower() == Page:lower() then return end
+		if tostring(window.CurrentPage):lower() == Page:lower() then
+			return
+		end
 
 		if window.CurrentPage then
 			Latte.Modules.Animator.Window.animateOut(window.CurrentPage, window.CurrentPage.UIScale)

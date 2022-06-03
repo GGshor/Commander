@@ -16,7 +16,7 @@ module.new = function(Name: string, Text: string?, Parent: Instance, Callback)
 	local Stylesheet = module.Latte.Modules.Stylesheet
 	local Comp = script.Comp:Clone()
 	local t = {}
-	t.Object =  Comp
+	t.Object = Comp
 	Comp.Name = Name
 	Comp.Title.Text = Text or Name
 	Comp.Title.TextColor3 = Stylesheet.Menu.DefaultTextColor
@@ -27,8 +27,16 @@ module.new = function(Name: string, Text: string?, Parent: Instance, Callback)
 
 	t.setActive = function(Status: boolean)
 		Comp.isActive.Visible = Status
-		Comp.Title.TextColor3 = returnItemOnStatement(Status == true, Stylesheet.ThemeColor, Stylesheet.Menu.DefaultTextColor)
-		Comp.Title.Font = returnItemOnStatement(Status == true, module.Latte.Modules.Stylesheet.Fonts.Semibold, module.Latte.Modules.Stylesheet.Fonts.Book)
+		Comp.Title.TextColor3 = returnItemOnStatement(
+			Status == true,
+			Stylesheet.ThemeColor,
+			Stylesheet.Menu.DefaultTextColor
+		)
+		Comp.Title.Font = returnItemOnStatement(
+			Status == true,
+			module.Latte.Modules.Stylesheet.Fonts.Semibold,
+			module.Latte.Modules.Stylesheet.Fonts.Book
+		)
 	end
 
 	module.Latte.Modules.Trigger.new(Comp, reaction, 2, false):Connect(function()

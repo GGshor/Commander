@@ -23,7 +23,7 @@ explicit matching. Defaults to `true`.
 function M.new(candidates, search_case_insensitive, search_fuzzy)
 	local m = {
 		search_case_insensitive = search_case_insensitive,
-		search_fuzzy = search_fuzzy
+		search_fuzzy = search_fuzzy,
 	}
 	setmetatable(m, { __index = M })
 	m:_set_candidates(candidates)
@@ -40,7 +40,9 @@ local function match_score(line, matchers)
 
 	for _, matcher in ipairs(matchers) do
 		local matcher_score = matcher(line)
-		if not matcher_score then return nil end
+		if not matcher_score then
+			return nil
+		end
 		score = score + matcher_score
 	end
 	return score
@@ -57,7 +59,9 @@ following fields:
   `1..n`: Tables of matching positions with the field start_pos and length
 ]]
 function M:explain(search, text)
-	if not search or #search == 0 then return {} end
+	if not search or #search == 0 then
+		return {}
+	end
 	if self.search_case_insensitive then
 		search = search:lower()
 		text = text:lower()
@@ -67,7 +71,9 @@ function M:explain(search, text)
 
 	for _, matcher in ipairs(matchers) do
 		local score, start_pos, end_pos, search = matcher(text)
-		if not score then return {} end
+		if not score then
+			return {}
+		end
 		local explanation = { score = score, start_pos = start_pos, end_pos = end_pos }
 		local s_start, s_index = 1, 1
 		local l_start, l_index = start_pos, start_pos
@@ -77,7 +83,9 @@ function M:explain(search, text)
 				l_index = l_index + 1
 			until search:sub(s_index, s_index) ~= text:sub(l_index, l_index) or s_index > #search
 			append(explanation, { start_pos = l_start, length = l_index - l_start })
-			if s_index > #search then break end
+			if s_index > #search then
+				break
+			end
 			repeat
 				l_index = l_index + 1
 			until search:sub(s_index, s_index) == text:sub(l_index, l_index) or l_index > end_pos
@@ -93,11 +101,17 @@ end
 -- @param search The search string to match
 -- @return A table of matching candidates, ordered by relevance.
 function M:match(search)
-	if not search or #search == 0 then return self.candidates end
+	if not search or #search == 0 then
+		return self.candidates
+	end
 	local cache = self.cache
-	if self.search_case_insensitive then search = search:lower() end
+	if self.search_case_insensitive then
+		search = search:lower()
+	end
 	local matches = cache.matches[search] or {}
-	if #matches > 0 then return matches end
+	if #matches > 0 then
+		return matches
+	end
 	local lines = cache.lines[string.sub(search, 1, -2)] or self.lines
 	local matchers = self:_matchers_for_search(search)
 
@@ -111,7 +125,9 @@ function M:match(search)
 	end
 	cache.lines[search] = matching_lines
 
-	table.sort(matches, function(a ,b) return a.score < b.score end)
+	table.sort(matches, function(a, b)
+		return a.score < b.score
+	end)
 	local matching_candidates = {}
 	for _, match in ipairs(matches) do
 		matching_candidates[#matching_candidates + 1] = self.candidates[match.index]
@@ -124,18 +140,22 @@ function M:_set_candidates(candidates)
 	self.candidates = candidates
 	self.cache = {
 		lines = {},
-		matches = {}
+		matches = {},
 	}
 	local lines = {}
 	local fuzzy_score_penalty = 0
 
 	for i, candidate in ipairs(candidates) do
-		if type(candidate) ~= 'table' then candidate = { candidate } end
-		local text = table.concat(candidate, ' ')
-		if self.search_case_insensitive then text = text:lower() end
+		if type(candidate) ~= "table" then
+			candidate = { candidate }
+		end
+		local text = table.concat(candidate, " ")
+		if self.search_case_insensitive then
+			text = text:lower()
+		end
 		lines[#lines + 1] = {
 			text = text,
-			index = i
+			index = i,
 		}
 		fuzzy_score_penalty = math.max(fuzzy_score_penalty, #text)
 	end
@@ -144,14 +164,16 @@ function M:_set_candidates(candidates)
 end
 
 local pattern_escapes = {}
-for c in string.gmatch('^$()%.[]*+-?', '.') do pattern_escapes[c] = '%' .. c end
+for c in string.gmatch("^$()%.[]*+-?", ".") do
+	pattern_escapes[c] = "%" .. c
+end
 
 local function fuzzy_search_pattern(search)
-	local pattern = ''
+	local pattern = ""
 	for i = 1, #search do
 		local c = search:sub(i, i)
 		c = pattern_escapes[c] or c
-		pattern = pattern .. c .. '.-'
+		pattern = pattern .. c .. ".-"
 	end
 	return pattern
 end
@@ -164,7 +186,9 @@ function M:_matchers_for_search(search_string)
 	local fuzzy = self.search_fuzzy
 	local fuzzy_penalty = self.fuzzy_score_penalty
 	local groups = {}
-	for part in search_string:gmatch('%S+') do groups[#groups + 1] = part end
+	for part in search_string:gmatch("%S+") do
+		groups[#groups + 1] = part
+	end
 	local matchers = {}
 
 	for _, search in ipairs(groups) do

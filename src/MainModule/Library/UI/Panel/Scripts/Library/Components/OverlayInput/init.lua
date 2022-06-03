@@ -1,6 +1,5 @@
 local module = {}
 
-
 module.new = function(Title: string, Parent: Instance)
 	local Stylesheet = module.Latte.Modules.Stylesheet
 	local Trigger = module.Latte.Modules.Trigger
@@ -17,8 +16,8 @@ module.new = function(Title: string, Parent: Instance)
 		["Text"] = "",
 		["Parent"] = Parent,
 		["Events"] = {
-			["Dismissed"] = Instance.new("BindableEvent")
-		}
+			["Dismissed"] = Instance.new("BindableEvent"),
+		},
 	}
 
 	local function cook()
@@ -38,7 +37,7 @@ module.new = function(Title: string, Parent: Instance)
 		t.Text = comp.Container.View.Input.Input.Text
 	end)
 
-	exit = RoundButton.new("Exit", "rbxassetid://6235536018", comp.Container.View.Top, dismiss, {Text = nil})
+	exit = RoundButton.new("Exit", "rbxassetid://6235536018", comp.Container.View.Top, dismiss, { Text = nil })
 	submit = FlatButton.new("Submit", "Submit", comp.Container.View.Bottom, dismiss, comp.Container.View.Input.Input)
 	submit.Size = UDim2.new(0, 75, 1, 0)
 	comp.BackgroundTransparency = 0.5

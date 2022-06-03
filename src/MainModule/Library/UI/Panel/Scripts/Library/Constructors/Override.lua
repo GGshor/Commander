@@ -5,7 +5,7 @@ module.init = function()
 	if not Stylesheet.Duration then
 		Stylesheet.Duration = {
 			["VeryShort"] = 0.15,
-			["Short"] = 0.3
+			["Short"] = 0.3,
 		}
 	end
 
@@ -15,7 +15,7 @@ module.init = function()
 			["Book"] = Enum.Font.Gotham,
 			["Semibold"] = Enum.Font.GothamSemibold,
 			["Bold"] = Enum.Font.GothamSemibold,
-			["Heavy"] = Enum.Font.GothamSemibold
+			["Heavy"] = Enum.Font.GothamSemibold,
 		}
 	end
 
@@ -40,15 +40,13 @@ module.init = function()
 			["MenuButton"] = 1, -- lol do not do funny, it messes up
 			["ProfileIcon"] = UDim.new(1, 0),
 			["Window"] = UDim.new(0, 6),
-			["OverlayInput"] = UDim.new(0, 6)
+			["OverlayInput"] = UDim.new(0, 6),
 		}
 	end
 
 	module.Latte.Modules.Animator.EasingData = Stylesheet.EasingData
 end
 
-module.setup = function()
-
-end
+module.setup = function() end
 
 return module

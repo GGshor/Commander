@@ -21,10 +21,14 @@ module.notifyUser = function(Title: string?, Content: string, Duration: number?)
 			["Title"] = Title or "Commander",
 			["Text"] = Content,
 			["Duration"] = Duration or 5,
-			["Icon"] = "rbxassetid://6027381584"
+			["Icon"] = "rbxassetid://6027381584",
 		})
 	else
-		bindable:Fire("newNotify", "", {["From"] = Title or "System", ["Content"] = Content, ["Sound"] = Settings.UI.AlertSound})
+		bindable:Fire(
+			"newNotify",
+			"",
+			{ ["From"] = Title or "System", ["Content"] = Content, ["Sound"] = Settings.UI.AlertSound }
+		)
 	end
 end
 
@@ -42,14 +46,14 @@ module.setup = function()
 				allLists[Protocol].List.Parent = nil
 			else
 				allLists[Protocol] = {
-					Window = Latte.Components.Window.new(Protocol, Protocol, Vector2.new(300, 400), false, Elements)
+					Window = Latte.Components.Window.new(Protocol, Protocol, Vector2.new(300, 400), false, Elements),
 				}
 
 				Latte.Components.Page.new("Body", allLists[Protocol].Window.Pages).UIListLayout:Destroy()
 			end
 
 			allLists[Protocol]["List"] = Latte.Components.DenseList.new("List", allLists[Protocol].Window.Pages.Body)
-			for i,v in pairs(Attachment) do
+			for i, v in pairs(Attachment) do
 				allLists[Protocol]["List"].Items[i] = v
 			end
 

@@ -19,12 +19,14 @@ function module.new(from: string, content: string, parent: Instance)
 	return setmetatable({
 		_object = component,
 		onDismiss = Instance.new("BindableEvent"),
-		dismissed = false
+		dismissed = false,
 	}, module)
 end
 
 function module:dismiss(arguments)
-	if self.dismissed or module.stopDismissing then return end
+	if self.dismissed or module.stopDismissing then
+		return
+	end
 	self.dismissed = true
 	self.onDismiss:Fire(arguments)
 	fade:Set(self._object.Container, 1, tweeninfo.Linear(0.15))
@@ -38,16 +40,16 @@ end
 function module:deploy()
 	self._object.Visible = true
 	self._object.Container.Position = UDim2.new(1, 0, 0, 0)
-	
+
 	tween.new(self._object.Container, tweeninfo.Quint(0.3), {
-		Position = UDim2.new(0, 0, 0, 0)
+		Position = UDim2.new(0, 0, 0, 0),
 	})
 	fade:Set(self._object.Container, 0, tweeninfo.Linear(0.15))
-	
+
 	self._object.Container.MouseButton1Click:Connect(function()
 		self:dismiss(true)
 	end)
-	
+
 	self._object.Container.Top.Exit.Button.MouseButton1Click:Connect(function()
 		self:dismiss(false)
 	end)
