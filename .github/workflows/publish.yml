@@ -19,6 +19,8 @@ jobs:
         
       - name: Build MainModule
         run: echo "$TEST"
+        env:
+          TEST: ${{ secrets.TEST }}
         
         
       # - name: Publish MainModule
