@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}        
         
       - name: Build MainModule
-        run: rojo build -o module.rbxm .github/module.deploy.project.json
+        run: rojo build -o module.rbxm .github/module.project.json
 
       - name: Publish MainModule
         uses: fjogeleit/http-request-action@v1
