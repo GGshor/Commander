@@ -1,27 +1,32 @@
-name: Publish
+name: publish
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  ci:
-    name: Publish
+  publish:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-      with:
-        submodules: true
-    - uses: Roblox/setup-foreman@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+        with:
+          ref: release
 
-    - name: Report tool versions
-      run: rojo --version
-
-    - name: Upload
-      run: rojo upload .github/module.project.json --asset_id 9809420845 --cookie $ROBLOSECURITY
-      env:
-        ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}
+      - uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+        
+      - name: Build MainModule
+        run: echo "$TEST"
+        
+        
+      # - name: Publish MainModule
+      #   uses: fjogeleit/http-request-action@v1
+      #   with:
+      #     url: "${{ secrets.PUBLISH_URL }}/${{ secrets.MODULE_ID }}"
+      #     method: "POST"
+      #     contentType: "multipart/form-data"
+      #     files: '{ "file": "module.rbxm" }'
+      #     customHeaders: '{ "x-auth-token": "${{ secrets.PUBLISH_TOKEN }}" }'
+      #     timeout: 10000
