@@ -2,20 +2,27 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
-return function(Settings, CustomPackages, Stylesheets)
-	-- BUILDER
+local debounce = false
+
+return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
+	if debounce == true then
+		return
+	else
+		debounce = true
+	end
+
 	script.SystemPackages.Settings:Destroy()
 	Settings.Name = "Settings"
 	CustomPackages.Name = "Custom"
 	CustomPackages.Parent = script.Packages
 	Settings.Parent = script.SystemPackages
-	for _, v in pairs(Stylesheets:GetChildren()) do
-		if v:IsA("ModuleScript") then
-			v.Parent = script.Library.UI.Stylesheets
+	for _, stylesheet: ModuleScript? in pairs(Stylesheets:GetChildren()) do
+		if stylesheet:IsA("ModuleScript") then
+			stylesheet.Parent = script.Library.UI.Stylesheets
 		end
 	end
 	Stylesheets:Destroy()
-	--
+
 
 	warn("Commander; Preparing...")
 	local remotefolder = Instance.new("Folder")
@@ -26,8 +33,7 @@ return function(Settings, CustomPackages, Stylesheets)
 		Event = Instance.new("RemoteEvent"),
 	}
 
-	local packages, packagesButtons, systemPackages, permissionTable, disableTable, cachedData, sharedCommons =
-		{}, {}, {}, {}, {}, {}, {}
+	local packages, packagesButtons, systemPackages, permissionTable, disableTable, cachedData, sharedCommons = {}, {}, {}, {}, {}, {}, {}
 	local currentTheme = nil
 
 	remotefolder.Name = "Commander Remotes"
@@ -37,7 +43,7 @@ return function(Settings, CustomPackages, Stylesheets)
 
 	for _, package in pairs(script.Packages:GetDescendants()) do
 		if package:IsA("ModuleScript") then
-			pcall(function()
+			local success, response = pcall(function()
 				local mod = require(package)
 				if mod.Execute and mod.Name and mod.Description and mod.Location then
 					packagesButtons[#packagesButtons + 1] = {
@@ -49,6 +55,9 @@ return function(Settings, CustomPackages, Stylesheets)
 					}
 				end
 			end)
+			if success == false then
+				warn("Commander; Error while trying to setup package:", tostring(package), "with reason:", tostring(response))
+			end
 		end
 	end
 
