@@ -22,6 +22,6 @@ jobs:
       run: rojo --version
 
     - name: Upload
-      run: rojo upload deploy.project.json --cookie "$ROBLOSECURITY" --asset_id 9809420845
+      run: rojo upload src/.github/module.project.json --cookie "$ROBLOSECURITY" --asset_id 9809420845
       env:
         ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}
