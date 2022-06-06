@@ -16,8 +16,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
         
-        
       - name: Build MainModule
+      - shell: bash
         run: echo "$TEST"
         env:
           TEST: ${{ secrets.TEST }}
