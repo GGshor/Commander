@@ -14,20 +14,17 @@ jobs:
 
       - uses: Roblox/setup-foreman@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}        
         
-      - shell: bash
-        env:
-          TEST: ${{ secrets.TEST }}
-        run: echo "$TEST"
-        
-        
-      # - name: Publish MainModule
-      #   uses: fjogeleit/http-request-action@v1
-      #   with:
-      #     url: "${{ secrets.PUBLISH_URL }}/${{ secrets.MODULE_ID }}"
-      #     method: "POST"
-      #     contentType: "multipart/form-data"
-      #     files: '{ "file": "module.rbxm" }'
-      #     customHeaders: '{ "x-auth-token": "${{ secrets.PUBLISH_TOKEN }}" }'
-      #     timeout: 10000
+      - name: Build MainModule
+        run: rojo build -o module.rbxm .github/module.deploy.project.json
+
+      - name: Publish MainModule
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "${{ secrets.PUBLISH_URL }}${{ secrets.MODULE_ID }}"
+          method: "POST"
+          contentType: "multipart/form-data"
+          files: '{ "file": "module.rbxm" }'
+          customHeaders: '{ "x-auth-token": "${{ secrets.PUBLISH_TOKEN }}" }'
+          timeout: 10000
