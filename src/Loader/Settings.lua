@@ -28,7 +28,7 @@ local Permissions = {
 			"All",
 			"Others",
 		},
-		["Permissions"] = {
+		["Commands"] = {
 			"Kick",
 			"ChatLogs",
 			"JoinLogs",
@@ -42,7 +42,7 @@ local Permissions = {
 	["Admin"] = {
 		["Inherits"] = "Moderator",
 		["Priority"] = 2,
-		["Permissions"] = {
+		["Commands"] = {
 			"Ban",
 			"Shutdown",
 			"TimeBan",
@@ -54,7 +54,7 @@ local Permissions = {
 	["Owner"] = {
 		["Inherits"] = "Admin",
 		["Priority"] = 3,
-		["Permissions"] = {
+		["Commands"] = {
 			"*",
 		},
 	},
@@ -68,9 +68,8 @@ local UI = {
 
 local Misc = {
 	["DisableCredits"] = false,
-	-- v this only works outside Studio.
 	["AutoCreatorAdmin"] = true, -- when enabled, this automatically grants the game owner admin
-	["AutoCreatorAdminTo"] = "Owner", -- configure this if needed
+	["AutoCreatorAdminTo"] = "Owner", -- configure this if needed (directs to rank)
 }
 
 return {

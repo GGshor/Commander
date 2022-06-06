@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
+local GroupService = game:GetService("GroupService")
 local Players = game:GetService("Players")
 
 local debounce = false
@@ -23,7 +24,6 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 	end
 	Stylesheets:Destroy()
 
-
 	warn("Commander; Preparing...")
 	local remotefolder = Instance.new("Folder")
 
@@ -33,7 +33,8 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 		Event = Instance.new("RemoteEvent"),
 	}
 
-	local packages, packagesButtons, systemPackages, permissionTable, disableTable, cachedData, sharedCommons = {}, {}, {}, {}, {}, {}, {}
+	local packages, packagesButtons, systemPackages, permissionTable, disableTable, cachedData, sharedCommons =
+		{}, {}, {}, {}, {}, {}, {}
 	local currentTheme = nil
 
 	remotefolder.Name = "Commander Remotes"
@@ -56,7 +57,12 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 				end
 			end)
 			if success == false then
-				warn("Commander; Error while trying to setup package:", tostring(package), "with reason:", tostring(response))
+				warn(
+					"Commander; Error while trying to setup package:",
+					tostring(package),
+					"with reason:",
+					tostring(response)
+				)
 			end
 		end
 	end
@@ -67,9 +73,9 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 		if
 			groupconfig["Inherits"]
 			and permissions[groupconfig["Inherits"]]
-			and permissions[groupconfig["Inherits"]]["Permissions"]
+			and permissions[groupconfig["Inherits"]]["Commands"]
 		then
-			for _, perm in ipairs(permissions[groupconfig["Inherits"]]["Permissions"]) do
+			for _, perm in ipairs(permissions[groupconfig["Inherits"]]["Commands"]) do
 				table.insert(temptable, perm)
 			end
 			local inherited = buildTempPermissions(
@@ -92,20 +98,20 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 	local function buildPermissionTables()
 		local permissions = systemPackages.Settings["Permissions"]
 
-		for i, v in pairs(permissions) do
-			permissionTable[i] = {}
+		for rank, config in pairs(permissions) do
+			permissionTable[rank] = {}
 
-			if v["Permissions"] then
-				for _, perm in ipairs(v["Permissions"]) do
-					permissionTable[i][perm] = true
+			if config["Commands"] then
+				for _, perm in ipairs(config["Commands"]) do
+					permissionTable[rank][perm] = true
 				end
 			end
 
-			if v["Inherits"] and permissions[v["Inherits"]] and permissions[v["Inherits"]]["Permissions"] then
-				local inherited = buildTempPermissions(permissions, i, v)
+			if config["Inherits"] and permissions[config["Inherits"]] and permissions[config["Inherits"]]["Commands"] then
+				local inherited = buildTempPermissions(permissions, rank, config)
 				if inherited ~= false then
 					for _, perm in ipairs(inherited) do
-						permissionTable[i][perm] = true
+						permissionTable[rank][perm] = true
 					end
 				end
 			end
@@ -116,12 +122,12 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 	local function buildDisableTables()
 		local permissions = systemPackages.Settings["Permissions"]
 
-		for i, v in pairs(permissions) do
-			disableTable[i] = {}
+		for rank, config in pairs(permissions) do
+			disableTable[rank] = {}
 
-			if v["DisallowPrefixes"] then
-				for _, disallow in ipairs(v["DisallowPrefixes"]) do
-					disableTable[i][disallow:lower()] = true
+			if config["DisallowPrefixes"] then
+				for _, disallow in ipairs(config["DisallowPrefixes"]) do
+					disableTable[config][disallow:lower()] = true
 				end
 			end
 		end
@@ -140,56 +146,61 @@ return function(Settings: {}, CustomPackages: Folder, Stylesheets: Folder)
 		buildDisableTables()
 		systemPackages.API.PermissionTable = permissionTable
 		systemPackages.API.DisableTable = disableTable
-		systemPackages.Settings.Version = { "1.5.0", "1.5.0 (Official Build)", "Lilium" }
+		systemPackages.Settings.Version = { "0.0.1", "0.0.1 (UnOfficial Build)", "Yoke" }
 
 		--@OVERRIDE
-		systemPackages.Settings.LatestVersion, systemPackages.Settings.IsHttpEnabled = "1.5.0", true
+		systemPackages.Settings.LatestVersion, systemPackages.Settings.IsHttpEnabled = "1.5.0", false
 		systemPackages.Settings.UI.AlertSound = systemPackages.Settings.UI.AlertSound or 6518811702
 		systemPackages.Settings.Misc.DataStoresKey = systemPackages.Settings.Misc.DataStoresKey or {}
 		if systemPackages.Settings.Misc.AutoCreatorAdmin and systemPackages.Settings.Misc.AutoCreatorAdminTo then
 			if systemPackages.Settings.Permissions[systemPackages.Settings.Misc.AutoCreatorAdminTo] then
 				if game.CreatorType == Enum.CreatorType.User and game.CreatorId then
 					systemPackages.Settings.Admins[game.CreatorId] = systemPackages.Settings.Misc.AutoCreatorAdminTo
+				elseif game.CreatorType == Enum.CreatorType.Group and game.CreatorId then
+					local success, response = pcall(GroupService.GetGroupInfoAsync, GroupService, game.CreatorId)
+					if success then
+						systemPackages.Settings.Admins[response.CreatorId] = systemPackages.Settings.Misc.AutoCreatorAdminTo
+					end
 				end
 			end
 		end
 		--
 
-		for i, v in pairs(systemPackages) do
+		for name, v in pairs(systemPackages) do
 			for index, value in pairs(systemPackages) do
-				if systemPackages[index] ~= v and typeof(v) ~= "function" and i ~= "Settings" then
+				if systemPackages[index] ~= v and typeof(v) ~= "function" and name ~= "Settings" then
 					v.Remotes = remotes
 					v[index] = value
 				end
 			end
 		end
 
-		for _, v in pairs(script.Packages:GetDescendants()) do
-			if v:IsA("ModuleScript") and not v.Parent:IsA("ModuleScript") then
+		for _, instance in pairs(script.Packages:GetDescendants()) do
+			if instance:IsA("ModuleScript") and not instance.Parent:IsA("ModuleScript") then
 				local ok, response = pcall(function()
-					local mod = require(v)
-					mod.Services = systemPackages.Services
-					mod.API = systemPackages.API
-					mod.Settings = systemPackages.Settings
-					mod.Remotes = remotes
-					mod.Shared = sharedCommons
-					mod.fetchLogs = script.waypointBindable
-					mod.PackageId = v.Name
-					if mod and mod.Name and mod.Description and mod.Location then
-						packages[mod.Name] = mod
+					local package = require(instance)
+					package.Services = systemPackages.Services
+					package.API = systemPackages.API
+					package.Settings = systemPackages.Settings
+					package.Remotes = remotes
+					package.Shared = sharedCommons
+					package.fetchLogs = script.waypointBindable
+					package.PackageId = package.Name
+					if package and package.Name and package.Description and package.Location then
+						packages[package.Name] = package
 					end
 
-					if not mod.Init then
-						mod.Execute(nil, "firstrun")
+					if not package.Init then
+						package.Execute(nil, "firstrun")
 					else
-						mod.Init()
+						package.Init()
 					end
 				end)
 
 				if not ok then
 					error(
 						"\n\nOh snap! Commander encountered a fatal error while trying to compile commands in the runtime...\n\nAffected files: game."
-							.. v:GetFullName()
+							.. instance:GetFullName()
 							.. ".lua\nError message: "
 							.. response
 							.. "\n\n"
